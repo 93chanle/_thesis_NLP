@@ -2,7 +2,7 @@
 #%% Load packages
 
 import matplotlib.pyplot as plt
-import os
+# import os
 import json
 import pickle
 import torch
@@ -24,6 +24,27 @@ root = parse_xml_file(data_path)
 #%% Convert xml to list of documents (list of list of sentences)
 docs = parse_xml_file_to_text(root)
 
+### Get a snippet of the data for building proof of concept
+# docs_demo = docs[0: 9]
+
+#%%
+cleaned_docs = []
+
+for doc in docs_demo:
+
+    cleaned_doc = []
+    for sentence in doc:
+        cleaned_doc.append(clean_text(sentence))
+
+    cleaned_docs.append(cleaned_doc)
+
+#%%
+with open("data/docs_demo_processed", 'wb') as f:
+    pickle.dump(cleaned_docs, f)
+
+
+
+#####
 #%% Join doc in one paragraph + replace newlines
 docs_paragraph = [" ".join(doc) for doc in docs]
 docs_paragraph = [re.sub(r'\s+', ' ', d.replace('\n', ' ')).strip() for d in docs_paragraph]
@@ -35,7 +56,6 @@ docs_cleaned = [clean_text(d) for d in docs_paragraph]
 with open("data/train_text_preprocessed.txt", 'w', encoding='utf-8') as f:
     for d in docs_cleaned:
         f.writelines(d)
-
 
 #%%
 def parse_xml_file(file_path):
@@ -91,3 +111,4 @@ def clean_text(text):
     text = re.sub(r'\s+\.', '.', text)
     
     return text.strip().lower()
+# %%
